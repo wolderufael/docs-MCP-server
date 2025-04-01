@@ -48,26 +48,44 @@ async def fetch_url(url: str):
 
 @mcp.tool()  
 async def get_docs(query: str, library: str):
-  """
-  Search the latest docs for a given query and library.
-  Supports langchain, openai, and llama-index.
+    """
+Search the latest documentation for a specific library and query.
 
-  Args:
-    query: The query to search for (e.g. "Chroma DB")
-    library: The library to search in (e.g. "langchain")
+Parameters:
+    query: The search term or phrase to look up in the documentation.
+        Examples:
+        - "how to use Chroma DB"
+        - "RAG implementation"
+        - "chat model parameters"
+        - "embedding functions"
 
-  Returns:
-    Text from the docs
-  """
-  if library not in docs_urls:
-    raise ValueError(f"Library {library} not supported by this tool")
-  
-  query = f"site:{docs_urls[library]} {query}"
-  results = await search_web(query)
-  if len(results["organic"]) == 0:
-    return "No results found"
-  
-  text = ""
-  for result in results["organic"]:
-    text += await fetch_url(result["link"])
-  return text
+    library: The name of the library to search within.
+        Must be one of: "langchain", "llama-index", or "openai"
+        Examples:
+        - "langchain" - searches python.langchain.com/docs
+        - "llama-index" - searches docs.llamaindex.ai
+        - "openai" - searches platform.openai.com/docs
+
+Returns:
+    str: The relevant documentation text found for the query.
+        Returns "No results found" if no matches are found.
+
+Raises:
+    ValueError: If the specified library is not supported.
+"""
+    if library not in docs_urls:
+        raise ValueError(f"Library {library} not supported by this tool")
+    
+    query = f"site:{docs_urls[library]} {query}"
+    results = await search_web(query)
+    if len(results["organic"]) == 0:
+        return "No results found"
+    
+    text = ""
+    for result in results["organic"]:
+        text += await fetch_url(result["link"])
+    return text
+
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")
