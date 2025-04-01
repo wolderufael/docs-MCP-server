@@ -60,7 +60,7 @@ Make sure to restart your terminal afterwards to ensure that the `uv` command ge
 
 ```bash
 # Create a new directory for our project
-git clone
+git clone https://github.com/wolderufael/docs-MCP-server.git
 cd docs-mcp-server
 
 # Create virtual environment and activate it
